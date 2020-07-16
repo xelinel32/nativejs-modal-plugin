@@ -1,21 +1,23 @@
 function _createModal(options) {
-  const vmodal = document.createElement("div");
-  vmodal.classList.add("vmodal");
+  const vmodal = document.createElement('div');
+  const DEFAULT_WIDTH = '600px';
+  vmodal.classList.add('vmodal');
   vmodal.insertAdjacentHTML(
-    "afterBegin",
-    `<div class="vmodal-overlay">
-        <div class="vmodal-window">
+    'afterBegin',
+    `<div class="vmodal-overlay" data-close="true">
+        <div class="vmodal-window" style="width: ${
+          options.width || DEFAULT_WIDTH
+        }">
           <div class="vmodal-header">
-            <span class="vmodal-title">Modal title</span>
-            <span class="vmodal-close">&times;</span>
+            <span class="vmodal-title">${options.title || 'Window'}</span>
+            ${
+              options.closable
+                ? `<span class="vmodal-close" data-close="true">&times;</span>`
+                : ''
+            }
           </div>
           <div class="vmodal-body">
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Architecto nihil cumque libero delectus aut quos provident et,
-              facere aliquam commodi aliquid sapiente odit, impedit iure quasi
-              tempora voluptatibus non aspernatur.
-            </p>
+            ${options.content || ''}
           </div>
           <div class="vmodal-footer">
             <button>Ok</button>
@@ -32,21 +34,41 @@ $.modal = function (options) {
   const $modal = _createModal(options);
   const ANIMATION_SPEED = 200;
   let closing = false;
-  return {
+  let destroyed = false;
+
+  const modal = {
     open() {
+      if (destroyed) {
+        return console.log('Modal is destroyed!');
+      }
       if (!closing) {
-        $modal.classList.add("open");
+        $modal.classList.add('open');
       }
     },
     close() {
       closing = true;
-      $modal.classList.remove("open");
-      $modal.classList.add("hide");
+      $modal.classList.remove('open');
+      $modal.classList.add('hide');
       setTimeout(() => {
-        $modal.classList.remove("hide");
+        $modal.classList.remove('hide');
         closing = false;
       }, ANIMATION_SPEED);
     },
-    destroy() {},
   };
+
+  const listener = (e) => {
+    if (event.target.dataset.close) {
+      modal.close();
+    }
+  };
+
+  $modal.addEventListener('click', listener);
+
+  return Object.assign(modal, {
+    destroy() {
+      $modal.parentNode.removeChild($modal);
+      $modal.removeEventListener('click', listener);
+      destroyed = true;
+    },
+  });
 };
