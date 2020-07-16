@@ -1,0 +1,76 @@
+$background-all: rgba(0, 0, 0, 0.5);
+$white: #fff;
+$gray: #eee;
+.vmodal {
+  &-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 0;
+    z-index: -1;
+    transition: background-color 0.2s ease-in-out;
+  }
+  &-window {
+    width: 600px;
+    border-radius: 5px;
+    background-color: $white;
+    margin: 0 auto;
+    opacity: 0;
+    z-index: -1;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  &-header {
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid $gray;
+  }
+  &-title {
+    font-size: 1.5rem;
+  }
+  &-close {
+    cursor: pointer;
+    font-size: 20px;
+  }
+  &-body {
+    padding: 10px;
+    p {
+      margin: 0 0 5px;
+    }
+  }
+  &-footer {
+    padding: 5px 10px;
+    border-top: 1px solid $gray;
+  }
+  &.open {
+    .vmodal-overlay,
+    .vmodal-window {
+      opacity: 1;
+      z-index: 10;
+    }
+    .vmodal-window {
+      transform: translateY(50%);
+    }
+    .vmodal-overlay {
+      background: $background-all;
+    }
+  }
+  &.hide {
+    .vmodal-overlay,
+    .vmodal-window {
+      opacity: 1;
+      z-index: 10;
+    }
+    .vmodal-window {
+      transform: translateY(-100%);
+    }
+    .vmodal-overlay {
+      background: rgba(0, 0, 0, 0);
+    }
+  }
+}
