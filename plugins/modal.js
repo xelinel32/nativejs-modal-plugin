@@ -1,3 +1,27 @@
+Element.prototype.appendAfter = function (elem) {
+  elem.parentNode.insertBefore(this, elem.nextSibling);
+};
+
+function noop() {}
+
+function _createModalFooter(buttons = []) {
+  if (buttons.length == 0) {
+    return document.createElement('div');
+  }
+
+  const wrap = document.createElement('div');
+  wrap.classList.add('vmodal-footer');
+  buttons.forEach((btn) => {
+    const $btn = document.createElement('button');
+    $btn.textContent = btn.text;
+    $btn.classList.add('btn');
+    $btn.classList.add(`btn-${btn.type || 'secondary'}`);
+    $btn.onclick = btn.handler || noop;
+    wrap.appendChild($btn);
+  });
+  return wrap;
+}
+
 function _createModal(options) {
   const vmodal = document.createElement('div');
   const DEFAULT_WIDTH = '600px';
@@ -16,16 +40,15 @@ function _createModal(options) {
                 : ''
             }
           </div>
-          <div class="vmodal-body">
+          <div class="vmodal-body" data-content>
             ${options.content || ''}
           </div>
-          <div class="vmodal-footer">
-            <button>Ok</button>
-            <button>Cancel</button>
-          </div>
+
         </div>
       </div>`
   );
+  const footer = _createModalFooter(options.footerButtons);
+  footer.appendAfter(vmodal.querySelector('[data-content]'));
   document.body.appendChild(vmodal);
   return vmodal;
 }
@@ -69,6 +92,9 @@ $.modal = function (options) {
       $modal.parentNode.removeChild($modal);
       $modal.removeEventListener('click', listener);
       destroyed = true;
+    },
+    setContent(content) {
+      $modal.querySelector('[data-content]').innerHTML = content;
     },
   });
 };
